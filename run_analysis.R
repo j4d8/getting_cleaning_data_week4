@@ -15,16 +15,17 @@ require(stringr)
 require(tidyr)
 
 
-setwd(dir = )
+setwd(dir = "/Users/jdelarosa/Documents/Coursera/datasciencecoursera/getting_cleaning_data_week4/")
+
 #read in the data from test
 
-subject_test<-read_table(file = "/Users/jdelarosa/Documents/UCI HAR Dataset/test/subject_test.txt", col_names = FALSE)
+subject_test<-read_table(file = "./UCI HAR Dataset/test/subject_test.txt", col_names = FALSE)
 
-X_test<-read_table(file = "/Users/jdelarosa/Documents/UCI HAR Dataset/test/X_test.txt", col_names = FALSE)
+X_test<-read_table(file = "./UCI HAR Dataset/test/X_test.txt", col_names = FALSE)
 
-Y_test<- read_table(file = "/Users/jdelarosa/Documents/UCI HAR Dataset/test/y_test.txt", col_names = FALSE)
+Y_test<- read_table(file = "./UCI HAR Dataset/test/y_test.txt", col_names = FALSE)
 
-features<- read_table(file = "/Users/jdelarosa/Documents/UCI HAR Dataset/features.txt", col_names = FALSE)
+features<- read_table(file = "./UCI HAR Dataset/features.txt", col_names = FALSE)
 
 #renames X_test columns with descriptive names in features
 colnames(X_test) <- features$X1
@@ -92,12 +93,16 @@ train_combined<-X_train %>%
 #Combines train and test data 
 combined_tidy_data <- full_join(test_combined, train_combined)%>%arrange(subject)
 
-average_combined_tidy_data <-combined_tidy_data %>% group_by(subject)%>%summarise(funs(mean))%>% mutate(Y_label_activity_desc = case_when(Y_label == "6"~"LAYING",
-                                                                                                                                               Y_label == "5"~"STANDING",
-                                                                                                                                               Y_label == "4"~"SITTING",
-                                                                                                                                               Y_label == "3"~"WALKING_DOWNSTAIRS",
-                                                                                                                                               Y_label == "2"~"WALKING_UPSTAIRS",
-                                                                                                                                               Y_label == "1"~"WALKING"))
+#Creates Summarised Tidy Data set from combined_tidy_data set of mean of all values grouped by subject and activity (activity_label)
+average_combined_tidy_data <-combined_tidy_data %>% group_by(subject, Y_label)%>%
+  summarise_all(funs(mean))%>%
+  mutate(Y_label_activity_desc = case_when(Y_label == "6"~"LAYING", 
+                                           Y_label == "5"~"STANDING",
+                                          Y_label == "4"~"SITTING",
+                                          Y_label == "3"~"WALKING_DOWNSTAIRS",
+                                           Y_label == "2"~"WALKING_UPSTAIRS",
+                                           Y_label == "1"~"WALKING"))
 
+write.table(file = "./submitted_Tidy_Data_Step5.txt", x = average_combined_tidy_data,row.names = FALSE)                                                                                                                                               
 
 
