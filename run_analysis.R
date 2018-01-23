@@ -101,7 +101,9 @@ average_combined_tidy_data <-combined_tidy_data %>% group_by(subject, Y_label)%>
                                           Y_label == "4"~"SITTING",
                                           Y_label == "3"~"WALKING_DOWNSTAIRS",
                                            Y_label == "2"~"WALKING_UPSTAIRS",
-                                           Y_label == "1"~"WALKING"))
+                                           Y_label == "1"~"WALKING"))%>%select(-source)
+
+
 
 write.table(file = "./submitted_Tidy_Data_Step5.txt", x = average_combined_tidy_data,row.names = FALSE)                                                                                                                                               
 
